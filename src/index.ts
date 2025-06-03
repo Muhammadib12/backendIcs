@@ -38,7 +38,7 @@ app.use("/api", userStatsRouter);
 app.use("/api", adminActivityRoutes);
 app.use("/api", supportRoutes);
 
-app.get("/keep-alive", (req, res) => {
+app.get("/api/keep-alive", (req, res) => {
   res.status(200).send("OK");
 });
 
