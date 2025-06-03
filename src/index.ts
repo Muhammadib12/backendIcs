@@ -15,16 +15,6 @@ dotenv.config();
 
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",               // أثناء التطوير المحلي
-      "https://backendics.onrender.com",     // موقعك على Render
-      "https://اسم_موقعك_الفرونت_هنا.com"    // إن كنت تستخدم دومين مخصص
-    ],
-    credentials: true,
-  })
-);
 
 
 
