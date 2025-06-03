@@ -27,6 +27,8 @@ app.use(
 );
 
 
+
+
 app.use(logVisit);
 app.use(cookieParser());
 app.use(express.json());
@@ -35,6 +37,11 @@ app.use("/api", adminStatsRouter);
 app.use("/api", userStatsRouter);
 app.use("/api", adminActivityRoutes);
 app.use("/api", supportRoutes);
+
+app.get("/keep-alive", (req, res) => {
+  res.status(200).send("OK");
+});
+
 
 app.use("/api/auth", authRoutes);
 connectDB();
