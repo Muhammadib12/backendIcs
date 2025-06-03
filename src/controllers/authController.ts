@@ -21,6 +21,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const normalizedUsername = username.toLowerCase();
 
     const newUser = new User({
@@ -30,9 +31,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       tel,
       name,
     });
-
     await newUser.save();
-
     await logActivity({
       user: newUser.username,
       action: "signup",
@@ -42,14 +41,15 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     const token = jwt.sign(
       { userId: newUser._id },
       process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "7d" }
+      {
+        expiresIn: "7d",
+      }
     );
 
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       })
       .status(201)
@@ -77,38 +77,51 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
       res.status(400).json({ message: "All the fields are required" });
       return;
     }
-
     const normalizedUsername = username.toLowerCase();
-    const user = await User.findOne({ username: normalizedUsername });
 
+    // البحث عن المستخدم
+    const user = await User.findOne({ username: normalizedUsername });
     if (!user) {
       res.status(400).json({ message: "Invalid username or password" });
       return;
     }
 
+    // await logActivity({
+    //   user: user.username,
+    //   action: "login",
+    //   details: "התחבר למערכת",
+    // });
+
+    // مقارنة كلمة المرور
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       res.status(400).json({ message: "Invalid password" });
       return;
     }
 
-    const tokenExpiry = rememberme ? "7d" : "1h";
+    // إعداد مدة الصلاحية حسب rememberme
+    const tokenExpiry = rememberme ? "7d" : "1h"; // JWT
     const cookieMaxAge = rememberme
-      ? 7 * 24 * 60 * 60 * 1000
-      : 1 * 60 * 60 * 1000;
+      ? 7 * 24 * 60 * 60 * 1000 // 7 أيام
+      : 1 * 60 * 60 * 1000; // ساعة
 
+    // توليد JWT
     const token = jwt.sign(
-      { userId: user._id, status: user.status },
+      {
+        userId: user._id,
+        status: user.status, // أضف الحالة هنا
+      },
       process.env.JWT_SECRET_KEY as string,
       { expiresIn: tokenExpiry }
     );
 
+    // إعداد الكوكي
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: process.env.NODE_ENV === "production",
         maxAge: cookieMaxAge,
+        sameSite: "strict",
       })
       .status(200)
       .json({
@@ -127,7 +140,6 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 export const updateProfile = async (
   req: Request,
   res: Response
@@ -156,7 +168,6 @@ export const updateProfile = async (
     }
 
     await user.save();
-
     if (user.username !== "admin1") {
       await logActivity({
         user: user.username,
@@ -165,6 +176,7 @@ export const updateProfile = async (
       });
     }
 
+    // إعادة إرسال معلومات المستخدم (بدون كلمة السر)
     const { password: _, ...userWithoutPassword } = user.toObject();
 
     res.status(200).json({
@@ -181,12 +193,12 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     });
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (e) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "InternL server error" });
   }
 };
