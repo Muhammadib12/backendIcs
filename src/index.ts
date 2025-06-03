@@ -19,13 +19,12 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173", // للفرونت المحلي
-      "https://your-frontend-domain.vercel.app", // إذا كنت سترفع الواجهة لاحقًا
+      "http://localhost:5173",
+      "https://your-frontend-domain.vercel.app",
     ],
     credentials: true,
   })
 );
-
 
 app.use(logVisit);
 app.use(cookieParser());
