@@ -51,10 +51,13 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // تم التعديل هنا
+        path: "/" // تم إضافة هذا
       })
       .status(201)
       .json({
         message: "User registered successfully",
+        token: token, // تم إضافة التوكن في الاستجابة
         user: {
           id: newUser._id,
           username: newUser.username,
@@ -121,11 +124,13 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: cookieMaxAge,
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // تم التعديل هنا
+        path: "/" // تم إضافة هذا
       })
       .status(200)
       .json({
         message: "Logged in successfully",
+        token: token, // تم إضافة التوكن في الاستجابة
         user: {
           id: user._id,
           username: user.username,
@@ -140,6 +145,7 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const updateProfile = async (
   req: Request,
   res: Response
@@ -194,11 +200,12 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // تم التعديل هنا
+      path: "/" // تم إضافة هذا
     });
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (e) {
-    res.status(500).json({ message: "InternL server error" });
+    res.status(500).json({ message: "Internal server error" }); // تم تصحيح الخطأ الإملائي
   }
 };
