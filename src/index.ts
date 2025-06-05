@@ -22,11 +22,10 @@ app.use(
   cors({
     origin: "https://frontend-ics-nadlan.vercel.app",
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // إضافة PATCH هنا
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
-
 
 app.use(logVisit);
 app.use(cookieParser());
