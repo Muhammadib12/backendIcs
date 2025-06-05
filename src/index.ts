@@ -16,13 +16,12 @@ dotenv.config();
 const app = express();
 
 
+
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://frontend-ics-nadlan.vercel.app/",
-    ],
-    credentials: true,
+    origin: "https://frontend-ics-nadlan.vercel.app", // دومين الواجهة الأمامية
+    credentials: true, // إذا كنت ترسل كوكيز أو Authorization header
   })
 );
 
