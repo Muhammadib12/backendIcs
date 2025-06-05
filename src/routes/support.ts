@@ -1,7 +1,7 @@
 // routes/support.ts
 import express from "express";
 import { Request, Response } from "express";
-import { logActivity } from "../utils/logActivity";
+import { logActivity } from "./../utils/logActivity";
 import SupportMessage from "./../models/supportMessageSchema";
 
 const router = express.Router();
