@@ -20,10 +20,13 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://frontend-ics-nadlan.vercel.app", // دومين الواجهة الأمامية
-    credentials: true, // إذا كنت ترسل كوكيز أو Authorization header
+    origin: "https://frontend-ics-nadlan.vercel.app",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
+
 
 app.use(logVisit);
 app.use(cookieParser());
