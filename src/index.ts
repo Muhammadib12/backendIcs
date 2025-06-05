@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend-domain.vercel.app",
+      "https://frontend-ics-nadlan.vercel.app/",
     ],
     credentials: true,
   })
